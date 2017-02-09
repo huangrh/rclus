@@ -2,7 +2,7 @@
 #'
 #' @param centroids T
 #' @return A lookup function to loo
-#' @export
+#'
 look_up <- function(centroid) lookup_generator(centroid)
 
 

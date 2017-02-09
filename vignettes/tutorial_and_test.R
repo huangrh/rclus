@@ -1,15 +1,4 @@
----
-title: "Rapid Clutering in R"
-author: "Ren-Huai Huang"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r, include=FALSE}
+## ---- include=FALSE------------------------------------------------------
 # Load the hospital summary score
 require(readxl)
 file <- system.file("cms/sas_oct2016/sas/SASoutput_Oct2016_2016-11-14.xlsx",package="cmsdata")
@@ -19,9 +8,8 @@ fit  <- kmeans(grp_score,centers=5,iter.max=100,nstart=50)
 fit  <- rstarating::cen2star(fit)
 table(fit$star)
 
-```
 
-```{r seed initilization }
+## ----seed initilization--------------------------------------------------
 # initialize the centroids of clusters
 centers   <- sort(grp_score[1:5])
 lookup    <- rclus:::lookup_generator(centers)
@@ -74,10 +62,8 @@ for (idx in seq_along(grp_score)) {
     }
 }
 sort(centers)
-```
 
-
-```{r}
+## ------------------------------------------------------------------------
 # -----------------------------------------------------------------
 clusters <- c()
 n=1
@@ -99,9 +85,8 @@ for (idx in seq_along(grp_score)) {
 #
 table(clusters)
 centers
-```
 
-```{r}
+## ------------------------------------------------------------------------
 # -----------------------------------------------------------------
 n=20
 old_centers <- centers
@@ -125,9 +110,8 @@ for (idx in seq_along(grp_score)) {
 #
 table(clusters)
 centers
-```
 
-```{r use rclus}
+## ----use rclus-----------------------------------------------------------
 require(rclus)
 
 # One iteration
@@ -139,20 +123,5 @@ fit1$init_seeds
 fit20 <- rclus(grp_score,seeds=5,maxiter = 20)
 fit20
 fit20$init_seeds
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

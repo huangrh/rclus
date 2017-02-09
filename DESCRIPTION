@@ -1,13 +1,14 @@
 Package: rclus
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Rapid Clustering
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: person("Ren-Huai", "Huang", email = "huangrenhuai@gmail.com", role = c("aut", "cre"))
+Description: Rapid Clustering. It works for One Dimensional array data only currently.
+License: GPL-2 | GPL-3
 LazyData: TRUE
-RoxygenNote: 5.0.1
-Suggests: knitr,
+Imports:
+Suggests:
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
