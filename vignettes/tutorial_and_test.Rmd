@@ -52,14 +52,15 @@ for (idx in seq_along(grp_score)) {
         # 
         # idxs_mcen2cen[1]
         # mindist_of_2seeds[1] <- min(abs(c(centers[-idxs_mcen2cen]) - centers[idxs_mcen2cen[1]]))
-        mindist_of_2seeds[1] <- min(abs(c(centers[-idxs_mcen2cen],grp_score[idx]) - centers[idxs_mcen2cen[1]]))
+        mindist_of_2seeds[1] <- min(abs(c(centers[-idxs_mcen2cen],grp_score[idx]) 
+                                        - centers[idxs_mcen2cen[1]]))
         
         # idxs_mcen2cen[2]
         # mindist_of_2seeds[2] <- min(abs(c(centers[-idxs_mcen2cen]) - centers[idxs_mcen2cen[2]]))
-        mindist_of_2seeds[2] <- min(abs(c(centers[-idxs_mcen2cen],grp_score[idx]) - centers[idxs_mcen2cen[2]]))
+        mindist_of_2seeds[2] <- min(abs(c(centers[-idxs_mcen2cen],grp_score[idx]) 
+                                        - centers[idxs_mcen2cen[2]]))
         
         # update the seeds
-        print(paste("test1:idx:",idx, centers[idxs_mcen2cen[which.min(mindist_of_2seeds)]],"->",grp_score[idx]))
         centers[idxs_mcen2cen[which.min(mindist_of_2seeds)]]=grp_score[idx]
         
     } else if(min(abs(grp_score[idx]- centers[-idx_min_cen2obs])) > 
@@ -70,7 +71,6 @@ for (idx in seq_along(grp_score)) {
         # >
         # shortest distance from the nearest seed to all other seeds
         #
-        print(paste("test2:idx:",idx,centers[idx_min_cen2obs],"=>",grp_score[idx]))
         centers[idx_min_cen2obs] <- grp_score[idx]
     }
 }
