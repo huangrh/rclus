@@ -20,4 +20,3 @@ A clustering object including clusters, actual iteration number,
 \description{
 Rapid Clustering. It works for One Dimensional array data only currently.
 }
-

@@ -9,4 +9,3 @@ lookup_generator(centroids = NULL)
 \description{
 Lookup Generator
 }
-

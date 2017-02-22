@@ -19,6 +19,9 @@ fit  <- kmeans(grp_score,centers=5,iter.max=100,nstart=50)
 fit  <- rstarating::cen2star(fit)
 table(fit$star)
 
+# calculate the sum square
+fit_df <- data.frame(x=grp_score,cluster=fit$cluster,cen=fit$centers[fit$cluster])
+sum((fit_df$x-fit_df$cen)^2)
 ```
 
 ```{r seed initilization }
@@ -127,20 +130,18 @@ table(clusters)
 centers
 ```
 
-```{r use rclus}
-require(rclus)
+```{r}
 
-# One iteration
-fit1 <- rclus(grp_score,seeds=5,maxiter=1)
-fit1
-fit1$init_seeds
 
-# maxiter = 20
-fit20 <- rclus(grp_score,seeds=5,maxiter = 20)
-fit20
-fit20$init_seeds
-
+# calculate the sum square of distance between each observation and its corresponding centers.
+df = data.frame(x = grp_score,cluster = clusters,center = centers[clusters])
+sum((df$x-df$center)^2)
 ```
+
+
+
+
+
 
 
 

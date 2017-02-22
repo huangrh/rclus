@@ -1,0 +1,80 @@
+---
+title: "Rapid Clustering"
+author: "Ren-Huai Huang"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=TRUE}
+# Load the hospital summary score
+require(readxl)
+file <- system.file("cms/sas_oct2016/sas/SASoutput_Oct2016_2016-11-14.xlsx",package="cmsdata")
+dat  <- read_excel(file,sheet="star_2016oct")
+grp_score<- dat$"Summary_score_win"
+fit  <- kmeans(grp_score,centers=5,iter.max=100,nstart=50)
+fit  <- rstarating::cen2star(fit)
+table(fit$star)
+
+# sum square
+sum((grp_score-fit$centers[fit$cluster])^2)
+
+```
+
+```{r rclus demo}
+require(rclus)
+
+# One iteration
+fit1 <- rclus(grp_score,seeds=5,maxiter=1)
+fit1
+fit1$init_seeds
+
+# maxiter = 20
+fit20 <- rclus(grp_score,seeds=5,maxiter = 20)
+fit20$iter_history
+fit20$init_seeds
+fit20$sum_square
+fit20$centers
+# sort
+fit100 <- rclus(sort(grp_score),seeds=5,maxiter = 100)
+fit100
+
+```
+
+```{r}
+# test1: well separated 5 clusters
+set.seed(100)
+require(reshape2)
+cls = 5
+dat <- as.data.frame(lapply(1:cls,function(x){x + rnorm(1000,sd=0.65)/cls}),col.names=1:cls);lapply(dat,range)
+dat <- melt(dat)
+plot(x=sort(dat$value),y=rep(1,(cls*1000)))
+(test1 <- rclus(dat$value,maxiter=0))
+
+# test2: well separated 8 clusters
+set.seed(100)
+require(reshape2)
+cls = 6
+dat <- as.data.frame(lapply(1:cls,function(x){x + rnorm(1000,sd=0.65)/cls}),col.names=1:cls);lapply(dat,range)
+dat <- melt(dat)
+plot(x=sort(dat$value),y=rep(1,(cls*1000)))
+(test1 <- rclus(dat$value,maxiter=0))
+
+
+    
+```
+
+```{}
+# test2: well separated 8 clusters
+library(doParallel)
+cl <- makeCluster(detectCores())
+registerDoParallel(cl)
+
+#stop the cluster
+stopCluster(cl); registerDoSEQ();
+```
+
+

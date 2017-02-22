@@ -22,8 +22,9 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
     #---------------
     # Seeds updating
     #---------------
-    clusters    <- c()
-    old_centers <- centers
+    clusters     <- c()
+    old_centers  <- centers
+    iter_history <- as.data.frame(matrix(ncol=5))
     for (iter in 1:maxiter) {
         # assign the observation to cluster
         for (idx in seq_along(dat)) {
@@ -34,6 +35,7 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
         centers <- sort(tapply(dat,clusters,mean))
 
         #
+        # iter_history[iter,] <- round(abs((centers - old_centers)/old_centers),6)
         if (identical(centers,old_centers)) {
             break
         } else {
@@ -63,9 +65,11 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
                    maxiter     = maxiter,
                    clusters    = clusters,
                    convergence = convergence,
-                   iter        = iter,
+                   iter        = iter - 1,
                    size        = t(as.matrix(table(clusters))),
-                   centers     = new_centers),class = "rclus")
+                   centers     = new_centers,
+                   # iter_history= iter_history,
+                   sum_square  = sum((dat-new_centers[clusters])^2)),class = "rclus")
 }
 
 

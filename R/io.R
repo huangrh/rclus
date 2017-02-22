@@ -9,6 +9,9 @@ print.rclus <- function(object,...) {
     cat("\n$iter:\n");          print.default(object$iter)
     cat("\n$size:\n");          print.default(object$size)
     cat("\n$centers:\n");       print.default(object$centers)
+    cat("\n$summary square:\n");print.default(object$sum_square)
     cat("\n$convergence:\n");   print.default(object$convergence)
     cat("\n$avalable fields:\n",names(object),"\n")
 }
+
+
