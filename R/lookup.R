@@ -1,7 +1,7 @@
 #' Index Look-Up
 #'
-#' @param centroids T
-#' @return A lookup function to loo
+#' @param centroid The controid is the center of the corresponding clustrer.
+#' @return A lookup function.
 #'
 look_up <- function(centroid) lookup_generator(centroid)
 

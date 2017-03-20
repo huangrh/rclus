@@ -7,10 +7,10 @@
 look_up(centroid)
 }
 \arguments{
-\item{centroids}{T}
+\item{centroid}{The controid is the center of the corresponding clustrer.}
 }
 \value{
-A lookup function to loo
+A lookup function.
 }
 \description{
 Index Look-Up

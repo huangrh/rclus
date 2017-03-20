@@ -11,15 +11,15 @@ vignette: >
 
 ```{r, include=TRUE}
 # Load the hospital summary score
-require(readxl)
-file <- system.file("cms/sas_oct2016/sas/SASoutput_Oct2016_2016-11-14.xlsx",package="cmsdata")
+require(readxl);require(rclus)
+file <- system.file("cms/oct2016/sas/SASoutput_Oct2016_2016-11-14.xlsx",package="cmsdata")
 dat  <- read_excel(file,sheet="star_2016oct")
 grp_score<- dat$"Summary_score_win"
 fit  <- kmeans(grp_score,centers=5,iter.max=100,nstart=50)
-fit  <- rstarating::cen2star(fit)
+fit  <- cen2star(fit)
 table(fit$star)
 
-# sum square
+# total within sum square
 sum((grp_score-fit$centers[fit$cluster])^2)
 
 ```

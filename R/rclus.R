@@ -63,13 +63,14 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
                    num_seeds   = seeds,
                    init_seeds  = init_seeds,
                    maxiter     = maxiter,
-                   clusters    = clusters,
+                   cluster     = clusters,
+                   star        = clusters,
                    convergence = convergence,
                    iter        = iter - 1,
                    size        = t(as.matrix(table(clusters))),
                    centers     = new_centers,
                    # iter_history= iter_history,
-                   sum_square  = sum((dat-new_centers[clusters])^2)),class = "rclus")
+                   tot.wcssr  = sum((dat-new_centers[clusters])^2)),class = "rclus")
 }
 
 

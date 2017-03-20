@@ -1,7 +1,5 @@
 #' S3 method of print for rclus class
 #'
-#'
-#'
 #' @export
 #'
 print.rclus <- function(object,...) {
@@ -9,7 +7,7 @@ print.rclus <- function(object,...) {
     cat("\n$iter:\n");          print.default(object$iter)
     cat("\n$size:\n");          print.default(object$size)
     cat("\n$centers:\n");       print.default(object$centers)
-    cat("\n$summary square:\n");print.default(object$sum_square)
+    cat("\n$total within-cluster sum of square residues:\n");print.default(object$tot.wcssr)
     cat("\n$convergence:\n");   print.default(object$convergence)
     cat("\n$avalable fields:\n",names(object),"\n")
 }
