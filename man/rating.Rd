@@ -5,18 +5,20 @@
 \alias{rating.default}
 \title{S3 Generic Function For Hospital Star Rating}
 \usage{
-rating(x, method, score_col)
+rating(x, method, score_col, iter.max)
 
-\method{rating}{default}(x, method = c("rclus", "kmeans", "na"))
+\method{rating}{default}(x, method = c("rclus", "kmeans", "na"),
+  iter.max = 200)
 }
 \arguments{
-\item{x}{Winsorized summary score returned from relvm2 which contains the
-wisorized summary score.}
+\item{x}{Winsorized summary score returned from relvm.}
 
 \item{method}{Kmean cluster algorithm.\itemize{ \item kmeans: kmeans
 clustering. \item rclus: rapid clustering in rclus package.}}
 
 \item{score_col}{The column name in a data frame as input for clustering.}
+
+\item{iter.max}{The maximum number of iterations.}
 }
 \value{
 Hospital rating stars 1, 2, 3, 4, and 5. star 5 indicates the best
