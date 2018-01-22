@@ -1,0 +1,95 @@
+---
+title: "Test Two Step Algorithm Of SAS PACk Dec. 2017 "
+author: "Ren-Huai Huang"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+require(dplyr)
+require(cmsdata);require(rstarating);require(relvm); require(rclus)
+```
+
+```{r}
+# Hospital General Information   
+path = "T:/Clinical Excellence/Analytics/Data Sources/cmsData/2017/20171221/Hospital_Revised_Flatfiles20171221"
+file = file.path(path,"Hospital General Information.csv")
+info  <- read.csv(file,stringsAsFactors = FALSE, na.strings=c("Not Available")) %>% 
+  colnames_tolower() %>% 
+  colnames_wiper(pattern="\\.",with="_") %>%
+  subset(select=c("provider_id","hospital_overall_rating"))
+
+# Star Input File
+path = "T:/Clinical Excellence/Analytics/Data Sources/cmsData/star_rating_input_file"
+file = file.path(path,"all_data_2017dec.csv")
+dat <- read.csv(file, stringsAsFactors = F) %>% colnames_tolower()
+
+```
+
+```{r}
+x <- mstbl(dat)
+# step 2, LVM adaptive  
+
+for (letter in letters[1]) {
+    file <- file.path("C:/rhuang/workspace/R/rclus/vignettes/update2018jan/output",
+                      paste0('fit_dat2017dec_true_lvm_',letter,'_',Sys.Date(),".rds")) 
+    
+    if (file.exists((file))) {
+        fit <- readRDS(file=file)
+    } else {
+        fit <- relvm(x)
+        saveRDS(fit,file)
+    } 
+    print(fit$groups$convergence)
+}  
+
+
+# step 3
+# star rating
+sr <- rating(fit$groups$summary_score,method="kmeans",score_col="sum_score",iter.max=1000)  
+table(sr$summary_score$star)
+```
+
+
+```{r}
+ss <- fit$groups$summary_score
+
+
+#
+sr <- rating(ss,method="kmeans",score_col="sum_score",iter.max=1000)  
+sr$tot.withinss
+table(sr$summary_score$star)
+
+```
+
+```{r}
+sr2 <- rating(ss,method="rclus",score_col = "sum_score",iter.max = 5000)
+star <- merge(x=sr$summary_score,y=sr2$summary_score,by="provider_id",suffixes=c("_kmean","_fast"))
+table(star[c("star_kmean", "star_fast")])
+```
+
+```{r}
+ss <- fit$groups$summary_score
+ss$group <- cut(ss$sum_score, breaks = c(quantile(ss$sum_score,probs=seq(0,1,0.2))),
+                labels=paste0(seq(0,80,20),"-",seq(20,100,20)),include.lowest = TRUE)
+
+
+
+#
+seeds <- tapply(ss$sum_score, ss$group, median)
+cl <- rclus(ss$sum_score,seeds = seeds,maxiter = 1000)  
+
+# step 2
+seeds2 <- tapply(cl$input_data,cl$star,mean)
+
+cl2 <- rclus(ss$sum_score,seeds=seeds2,maxiter = 5000)
+star2 <- cbind.data.frame(ss$provider_id,cl2$input_data,cl2$star,cl2$cluster)
+star2 <- merge(x=star2,y=info,by.x="ss$provider_id",by.y="provider_id",all=TRUE)
+
+```
+
+

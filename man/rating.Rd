@@ -8,7 +8,7 @@
 rating(x, method, score_col, iter.max)
 
 \method{rating}{default}(x, method = c("rclus", "kmeans", "na"),
-  iter.max = 200)
+  iter.max = 1000)
 }
 \arguments{
 \item{x}{Winsorized summary score returned from relvm.}

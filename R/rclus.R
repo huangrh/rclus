@@ -10,14 +10,22 @@
 #'
 #' @export
 #'
-rclus <- function(dat,seeds=5, maxiter = 1) {
+rclus <- function(dat,seeds=5, maxiter = 1000) {
 
     if (missing(dat) | is.null(dat)) stop("input data is missing!")
 
     #----------------------
     # Seeds initialization
     #----------------------
-    init_seeds <- centers <- seeds_init(dat,num_centers=seeds)
+    if (length(seeds) > 1) {
+        cat("seeds:",seeds,"\n")
+        init_seeds <- centers <- seeds
+    } else if (length(seeds) == 1 & is.integer(seeds)) {
+        init_seeds <- centers <- seeds_init(dat, num_centers=seeds)
+    } else {
+        stop("check your seeds")
+    }
+
 
     #---------------
     # Seeds updating
@@ -39,6 +47,7 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
         if (identical(centers,old_centers)) {
             break
         } else {
+            cat("-")
             old_centers <- centers
         }
     }
@@ -70,7 +79,8 @@ rclus <- function(dat,seeds=5, maxiter = 1) {
                    size        = t(as.matrix(table(clusters))),
                    centers     = new_centers,
                    # iter_history= iter_history,
-                   tot.wcssr  = sum((dat-new_centers[clusters])^2)),class = "rclus")
+                   tot.wcssr  = sum((dat-new_centers[clusters])^2)),
+              class = "rclus")
 }
 
 

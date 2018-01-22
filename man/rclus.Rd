@@ -4,7 +4,7 @@
 \alias{rclus}
 \title{Rapid Clustering}
 \usage{
-rclus(dat, seeds = 5, maxiter = 1)
+rclus(dat, seeds = 5, maxiter = 1000)
 }
 \arguments{
 \item{dat}{An one-dimension array data.}

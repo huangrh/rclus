@@ -17,12 +17,12 @@ rating <- function(x,method,score_col,iter.max) UseMethod("rating")
 #' @rdname rating
 #'
 #' @export
-rating.default <- function(x, method = c("rclus","kmeans","na"),iter.max=200) {
+rating.default <- function(x, method = c("rclus","kmeans","na"),iter.max=1000) {
     if (is.null(x)) return(NULL);
 
     star <- switch(method[1],
                    kmeans={
-                       fit = kmeans(x, centers=5, iter.max=iter.max, nstart = 50)
+                       fit = kmeans(x, centers=5, iter.max=iter.max, nstart = 500)
                        fit = cen2star(fit)
                        fit$star
                    },
