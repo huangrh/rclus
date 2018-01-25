@@ -4,14 +4,18 @@
 \alias{rclus}
 \title{Rapid Clustering}
 \usage{
-rclus(dat, seeds = 5, maxiter = 1000)
+rclus(dat, seeds = 5, maxiter = 1000, strict = NULL)
 }
 \arguments{
 \item{dat}{An one-dimension array data.}
 
-\item{seeds}{The number of start seeds.}
+\item{seeds}{The number of start seeds or a vector of centroids (or cluster centers).}
 
 \item{maxiter}{The maximum number of iteration specified.}
+
+\item{strict}{Strict value. It prevents an observation from being assigned to
+a cluster if its distance to the nearest cluster seed exceeds the value of
+the STRICT. Set strict = NULL to disable the strict mode.}
 }
 \value{
 A clustering object including clusters, actual iteration number,

@@ -7,7 +7,7 @@
 \usage{
 rating(x, method, score_col, iter.max)
 
-\method{rating}{default}(x, method = c("rclus", "kmeans", "na"),
+\method{rating}{default}(x, method = c("rclus2", "rclus", "kmeans", "na"),
   iter.max = 1000)
 }
 \arguments{

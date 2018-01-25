@@ -15,6 +15,14 @@ require(cmsdata);require(rstarating);require(relvm); require(rclus)
 ```
 
 ```{r}
+#
+files <- list_files("C:/rhuang/workspace/R/starsumm/vignettes/update2018Jan/output",
+                    patterns = "fit_dat2017.*rds$",recursive = F)
+fits  <- sapply(files, readRDS,simplify = FALSE)
+names(fits) <- gsub("\\.rds|fit_dat", "", basename(names(fits)))
+names(fits) <- substr(names(fits),1,nchar(names(fits))-13)
+str(fits,1)
+
 # Hospital General Information   
 path = "T:/Clinical Excellence/Analytics/Data Sources/cmsData/2017/20171221/Hospital_Revised_Flatfiles20171221"
 file = file.path(path,"Hospital General Information.csv")
@@ -28,6 +36,8 @@ path = "T:/Clinical Excellence/Analytics/Data Sources/cmsData/star_rating_input_
 file = file.path(path,"all_data_2017dec.csv")
 dat <- read.csv(file, stringsAsFactors = F) %>% colnames_tolower()
 
+#
+asc <- ascdata::asc_facility()
 ```
 
 ```{r}
@@ -76,20 +86,82 @@ table(star[c("star_kmean", "star_fast")])
 ss <- fit$groups$summary_score
 ss$group <- cut(ss$sum_score, breaks = c(quantile(ss$sum_score,probs=seq(0,1,0.2))),
                 labels=paste0(seq(0,80,20),"-",seq(20,100,20)),include.lowest = TRUE)
-
-
-
 #
 seeds <- tapply(ss$sum_score, ss$group, median)
-cl <- rclus(ss$sum_score,seeds = seeds,maxiter = 1000)  
+cl <- rclus(ss$sum_score,seeds = seeds,maxiter = 1000,strict = NULL)  
 
 # step 2
 seeds2 <- tapply(cl$input_data,cl$star,mean)
 
-cl2 <- rclus(ss$sum_score,seeds=seeds2,maxiter = 5000)
+cl2 <- rclus(ss$sum_score,seeds=seeds2,maxiter = 5000,strict = NULL)
 star2 <- cbind.data.frame(ss$provider_id,cl2$input_data,cl2$star,cl2$cluster)
 star2 <- merge(x=star2,y=info,by.x="ss$provider_id",by.y="provider_id",all=TRUE)
+```
+
+```{r}
+cl3 <- rclus(ss$sum_score,seeds=seeds2,maxiter = 5000,strict = 0.9)
+star3 <- data.frame(provider_id=ss$provider_id,input_data=cl3$input_data,
+                    star=cl3$star,cluster=cl3$cluster)
+star3 <- merge(x=star3,y=info,by="provider_id",all=TRUE)
+asc_star3 <- star3 %>% subset(provider_id %in% asc$ccnid)
+asc_star3 %>% subset(star != hospital_overall_rating)
+ct3 <- cl3$centers
+ct3[1:4] + (abs(ct3[1:4]-ct3[2:5]))/2
+```
+
+```{r}
+cl3 <- rclus(ss$sum_score,seeds=seeds2,maxiter = 5000,strict = 0.8630232965046532034999999)
+star3 <- data.frame(provider_id=ss$provider_id,input_data=cl3$input_data,
+                    star=cl3$star,cluster=cl3$cluster)
+star3 <- merge(x=star3,y=info,by="provider_id",all=TRUE)
+asc_star3 <- star3 %>% subset(provider_id %in% asc$ccnid)
+asc_star3 %>% subset(star != hospital_overall_rating)
+```
+
+```{r}
 
 ```
+
+```{r}
+# sum score adaptive
+ssa <- fits$`2017dec_adaptive_15qpts`$groups$summary_score
+ssa$group <- cut(ssa$sum_score, breaks = c(quantile(ssa$sum_score,probs=seq(0,1,0.2))),
+                labels=paste0(seq(0,80,20),"-",seq(20,100,20)),include.lowest = TRUE)
+
+a_cl <- rclus(ssa$sum_score,seeds = tapply(ssa$sum_score,ssa$group,median),
+              maxiter = 1000, strict = NULL)
+a_cl$centers
+a_cl2 <- rclus(ssa$sum_score,seeds = a_cl$centers,
+              maxiter = 1000, strict = 1)
+
+star <- data.frame(provider_id=ssa$provider_id,
+                   star=a_cl2$star, stringsAsFactors = F)
+star <- merge(x=star,y=info,by="provider_id",all=TRUE)
+asc_star <- star[star$provider_id %in% asc$ccnid,]
+table(asc_star[-1])
+```
+
+```{r}
+a_cl2 <- rclus(ssa$sum_score,seeds = a_cl$centers,
+              maxiter = 1000, strict = 0.8629527)
+
+star <- data.frame(provider_id=ssa$provider_id,
+                   sum_score = a_cl2$input_data,
+                   star=a_cl2$star, stringsAsFactors = F)
+star <- merge(x=star,y=info,by="provider_id",all=TRUE)
+asc_star <- star[star$provider_id %in% asc$ccnid,]
+asc_star %>% subset(star != hospital_overall_rating)
+```
+
+```{r}
+sr <- rating(ssa,method = "rclus2",score_col="sum_score",iter.max=5000)
+```
+
+
+
+
+
+
+
 
 
