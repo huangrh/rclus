@@ -5,7 +5,7 @@
 \title{S3 Method of Rating}
 \usage{
 \method{rating}{data.frame}(x, method = c("rclus2", "rclus", "kmeans", "na"),
-  score_col = "sum_score_win", iter.max = 1000)
+  score_col = "sum_score", iter.max = 1000)
 }
 \arguments{
 \item{x}{A data frame containing winsorized summary score returned from relvm.}

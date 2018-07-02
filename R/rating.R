@@ -1,3 +1,21 @@
+# Copyright (C) 2016-2018 Ren-Huai Huang <huangrenhuai@gmail.com>
+#
+# This file is part of rclus.
+#
+# rclus is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# rclus is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with rclus.  If not, see <http://www.gnu.org/licenses/>.
+
+
 #' S3 Generic Function For Hospital Star Rating
 #'
 #' Hospital star rating from wisorized summary scores.
@@ -64,7 +82,7 @@ rating.default <- function(x, method = c("rclus2","rclus","kmeans","na"),iter.ma
 #' @seealso \code{\link{rating}}
 #' @export
 rating.data.frame <- function(x,method = c("rclus2","rclus","kmeans","na"),
-                              score_col="sum_score_win",iter.max=1000) {
+                              score_col="sum_score",iter.max=1000) {
     if (exists(score_col,x))
     {
         fit = rating(x[,score_col],method=method,iter.max=iter.max)
@@ -73,5 +91,6 @@ rating.data.frame <- function(x,method = c("rclus2","rclus","kmeans","na"),
     }
     star <- fit$star
     fit$summary_score <- cbind.data.frame(x,star)
+    fit$star <- cbind.data.frame(x['ccnid'],star)
     fit
 }

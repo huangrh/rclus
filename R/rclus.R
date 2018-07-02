@@ -1,3 +1,21 @@
+# Copyright (C) 2016-2017 Ren-Huai Huang <huangrenhuai@gmail.com>
+#
+# This file is part of rclus.
+#
+# rclus is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# rclus is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with rclus.  If not, see <http://www.gnu.org/licenses/>.
+
+
 #' Rapid Clustering
 #'
 #' Rapid Clustering. It works for One Dimensional array data only currently.
@@ -74,8 +92,17 @@ rclus <- function(dat,seeds=5, maxiter = 1000, strict =NULL) {
     #------------------
     # Test if converged
     #------------------
-    new_centers <- sort(tapply(dat,clusters,mean))
+    # calculate the centers
+    if (is.null(strict) || strict < 0) {
+        new_centers <- sort(tapply(dat,clusters,mean))
+    } else {
+        # replicate SAS fastclus strict mode
+        strict_index <- (abs(dat-centers[clusters]) < strict)
+        new_centers  <- sort(tapply(dat[strict_index],clusters[strict_index],mean))
+    }
+    # test
     convergence <- ifelse(identical(new_centers, centers),0,1)
+
 
     #--------
     # output

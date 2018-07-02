@@ -2,9 +2,10 @@ Package: rclus
 Type: Package
 Title: Rapid Clustering
 Version: 0.1.0
-Authors@R: person("Ren-Huai", "Huang", email = "huangrenhuai@gmail.com", role = c("aut", "cre"))
+Author: Ren-Huai Huang, Ascension Health Care Excellence Analytics & ACRI
+Maintainer: Ren-Huai Huang <huangrenhuai@gmail.com>
 Description: Rapid Clustering. It works for One Dimensional array data only currently.
-License: GPL-2 | GPL-3
+License: GPL-3
 LazyData: TRUE
 Imports:
 Suggests:
