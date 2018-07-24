@@ -42,7 +42,7 @@ rclus <- function(dat,seeds=5, maxiter = 1000, strict =NULL) {
     if (length(seeds) > 1) {
         cat("\n","seeds:",seeds,"\n")
         init_seeds <- centers <- seeds
-    } else if (length(seeds) == 1 & is.integer(seeds)) {
+    } else if (length(seeds) == 1 & seeds == round(seeds)) {
         init_seeds <- centers <- seeds_init(dat, num_centers=seeds)
     } else {
         stop("check the seeds")
@@ -81,7 +81,7 @@ rclus <- function(dat,seeds=5, maxiter = 1000, strict =NULL) {
         }
     }
 
-    cat("\n","Cnter:",centers)
+    cat("\n","Center:",centers)
     #---------------------------------------------------------------------------
     # Final assignment of the data to the nearest/closest updated centroid
     #---------------------------------------------------------------------------

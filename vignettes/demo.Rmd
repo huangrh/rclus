@@ -9,72 +9,47 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include=TRUE}
-# Load the hospital summary score
-require(readxl);require(rclus)
-file <- system.file("cms/oct2016/sas/SASoutput_Oct2016_2016-11-14.xlsx",package="cmsdata")
-dat  <- read_excel(file,sheet="star_2016oct")
-grp_score<- dat$"Summary_score_win"
-fit  <- kmeans(grp_score,centers=5,iter.max=100,nstart=50)
-fit  <- cen2star(fit)
-table(fit$star)
+```{r}
+require(rstarating);require(relvm); require(rclus); require(cmsdata);require(dplyr)
 
-# total within sum square
-sum((grp_score-fit$centers[fit$cluster])^2)
-
+#
+cms_star_hospital_overall_rating2016oct <- read_csv(file.path(
+    "T:/Clinical Excellence/Analytics/Data Sources/cmsData/2016/20161110/Hospital_Revised_FlatFiles_20161110",
+    "Hospital General Information.csv"
+)) %>% 
+    select(ccnid, hospital_overall_rating)
 ```
 
-```{r rclus demo}
-require(rclus)
 
-# One iteration
-fit1 <- rclus(grp_score,seeds=5,maxiter=1)
-fit1
-fit1$init_seeds
+### Method 1: rclus
 
-# maxiter = 20
-fit20 <- rclus(grp_score,seeds=5,maxiter = 20)
-fit20$iter_history
-fit20$init_seeds
-fit20$sum_square
-fit20$centers
-# sort
-fit100 <- rclus(sort(grp_score),seeds=5,maxiter = 100)
-fit100
-
-```
+- This method matches Oct. 2016
 
 ```{r}
-# test1: well separated 5 clusters
-set.seed(100)
-require(reshape2)
-cls = 5
-dat <- as.data.frame(lapply(1:cls,function(x){x + rnorm(1000,sd=0.65)/cls}),col.names=1:cls);lapply(dat,range)
-dat <- melt(dat)
-plot(x=sort(dat$value),y=rep(1,(cls*1000)))
-(test1 <- rclus(dat$value,maxiter=0))
+# Non-adaptive LVM   
+# This is used by cms for Oct. 2016.   
+# It will take about 30 min or longer depending on your computer. 
+#
+fit_noad <- relvm_noad(mstbl(cms_star_rating_input_2016oct))
 
-# test2: well separated 8 clusters
-set.seed(100)
-require(reshape2)
-cls = 6
-dat <- as.data.frame(lapply(1:cls,function(x){x + rnorm(1000,sd=0.65)/cls}),col.names=1:cls);lapply(dat,range)
-dat <- melt(dat)
-plot(x=sort(dat$value),y=rep(1,(cls*1000)))
-(test1 <- rclus(dat$value,maxiter=0))
+# Rating
+sr_noad  <- rating(x=fit_noad$groups$summary_score,method="rclus",score_col="sum_score_win",iter.max=1)
 
-
-    
+# Compare to cms
+sr_noad_star <- merge(x = sr_noad$star, y = cms_star_hospital_overall_rating2016oct, by = "ccnid",all.x=T)
+with(sr_noad_star, table(star,hospital_overall_rating))
 ```
 
-```{}
-# test2: well separated 8 clusters
-library(doParallel)
-cl <- makeCluster(detectCores())
-registerDoParallel(cl)
+### Method 2: rclus2
 
-#stop the cluster
-stopCluster(cl); registerDoSEQ();
+
+
+```{r}
+# The true lvm model. 
+# use the data from Dec. 2017
+fit_true <- relvm(mstbl(cms_star_rating_input_2017dec))
+
+# rating 
+sr_true  <- rating(x=fit17$groups$summary_score,method="rclus2",score_col="sum_score",iter.max=5000)
 ```
-
 

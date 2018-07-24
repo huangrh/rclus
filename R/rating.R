@@ -71,26 +71,45 @@ rating.default <- function(x, method = c("rclus2","rclus","kmeans","na"),iter.ma
 #'
 #' Hospital star rating from wisorized summary scores in a data frame.
 #'
-#' @param x A data frame containing winsorized summary score returned from relvm.
+#' @param x A data frame containing winsorized summary score returned from
+#'   relvm.
 #' @param method Kmean cluster algorithm.\itemize{ \item kmeans: kmeans
 #'   clustering. \item rclus: rapid clustering in rclus package.}
 #' @param score_col The column name in a data frame serving as input for
-#'   clustering.
+#'   clustering. If null, it will be set according to the method: "rclus2" uses
+#'   "sum_score" and all other methods use "sum_score_win".
 #' @param iter.max The maximum number of iterations.
+#' @param report_indicator The indicator 0 and 1. "1" indicates the clustering uses
+#'   the rows only with a report_indicator of 1 from the input data frame.
 #' @return A data.frame containing the hospital rating stars 1, 2, 3, 4, and 5.
 #'   star 5 indicates the best hospital in USA.
 #' @seealso \code{\link{rating}}
 #' @export
-rating.data.frame <- function(x,method = c("rclus2","rclus","kmeans","na"),
-                              score_col="sum_score",iter.max=1000) {
+rating.data.frame <- function(x,
+                              method = c("rclus2","rclus","kmeans","na"),
+                              score_col=NULL,
+                              iter.max=1000) {
+    # subset by report_indicator
+    if (identical(method[1],"rclus2")) {
+        row_idx = x$report_indicator %in% 1
+        if (is.null( score_col)) score_col="sum_score"
+    } else {
+        row_idx = rep(TRUE, nrow(x))
+        if (is.null(score_col)) score_col = "sum_score_win"
+    }
+
+
+    # call Rating.default
     if (exists(score_col,x))
     {
-        fit = rating(x[,score_col],method=method,iter.max=iter.max)
+        fit = rating(x[row_idx,score_col],method=method,iter.max=iter.max)
     } else {
         stop("rating: the input score column doesn't match!")
     }
-    star <- fit$star
-    fit$summary_score <- cbind.data.frame(x,star)
-    fit$star <- cbind.data.frame(x['ccnid'],star)
+
+    # Output
+    star              <- fit$star
+    fit$summary_score <- cbind.data.frame(x[row_idx,],star)
+    fit$star          <- cbind.data.frame(x[row_idx,'ccnid',drop=F],star)
     fit
 }

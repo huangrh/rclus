@@ -5,18 +5,23 @@
 \title{S3 Method of Rating}
 \usage{
 \method{rating}{data.frame}(x, method = c("rclus2", "rclus", "kmeans", "na"),
-  score_col = "sum_score", iter.max = 1000)
+  score_col = NULL, iter.max = 1000)
 }
 \arguments{
-\item{x}{A data frame containing winsorized summary score returned from relvm.}
+\item{x}{A data frame containing winsorized summary score returned from
+relvm.}
 
 \item{method}{Kmean cluster algorithm.\itemize{ \item kmeans: kmeans
 clustering. \item rclus: rapid clustering in rclus package.}}
 
 \item{score_col}{The column name in a data frame serving as input for
-clustering.}
+clustering. If null, it will be set according to the method: "rclus2" uses
+"sum_score" and all other methods use "sum_score_win".}
 
 \item{iter.max}{The maximum number of iterations.}
+
+\item{report_indicator}{The indicator 0 and 1. "1" indicates the clustering uses
+the rows only with a report_indicator of 1 from the input data frame.}
 }
 \value{
 A data.frame containing the hospital rating stars 1, 2, 3, 4, and 5.
